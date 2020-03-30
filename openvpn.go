@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"sync"
 
-	log "github.com/cihub/seelog"
+        "github.com/trevor403/go-openvpn/log"
 	"github.com/stamp/go-openssl"
 )
 

@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	log "github.com/cihub/seelog"
+	"github.com/trevor403/go-openvpn/log"
 )
 
 func (m *Management) Start() (path string, err error) { // {{{

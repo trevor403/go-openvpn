@@ -3,15 +3,17 @@ package openvpn
 import (
 	"encoding/json"
 	"errors"
-	log "github.com/cihub/seelog"
-	"github.com/stamp/go-openssl"
 	"net"
 	"os"
 	"strconv"
 	"strings"
+
+        "github.com/trevor403/go-openvpn/log"
+	"github.com/stamp/go-openssl"
 )
 
 type Config struct {
+	config string
 	remote string
 	flags  map[string]bool
 	values map[string]string
@@ -75,6 +77,11 @@ func (c *Config) LoadFile(filename string) error {
 
 func (c *Config) Refresh() {
 	c.params = c.params[0:0] //Clear the array first
+	if c.config != "" {
+		c.params = append(c.params, "--config")
+		c.params = append(c.params, c.config)
+	}
+
 	for key, val := range c.values {
 		a := strings.Split("--"+key+" "+val, " ")
 		for _, ar := range a {
@@ -95,13 +102,17 @@ func (c *Config) Refresh() {
 If called for a second time replace the key
 */
 func (c *Config) Set(key, val string) {
-	if v, ok := c.values[key]; ok {
-		if v == val { //Skip if already set
-			return
+	if key == "config" {
+		c.config = val
+	} else {
+		if v, ok := c.values[key]; ok {
+			if v == val { //Skip if already set
+				return
+			}
+			delete(c.values, key)
 		}
-		delete(c.values, key)
+		c.values[key] = val
 	}
-	c.values[key] = val
 	c.Refresh()
 }
 
